@@ -1,0 +1,92 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User { 
+  id Int @id @default(autoincrement())
+  name String 
+  image String? 
+  phone String 
+  is_admin Boolean @default(false)
+  email String @unique
+  password String? 
+  token String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  transaction Transaction[]
+}
+
+model PS { 
+  id_ps Int @id @default(autoincrement()) 
+  id_room Int 
+  room Room @relation(fields: [id_room], references: [id_room])
+  name_ps String
+  price Decimal 
+  status_ps Boolean @default(true)
+   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  transaction Transaction[]
+}
+
+model Room { 
+  id_room Int @id @default(autoincrement())
+  name_room String 
+  ps PS[] 
+   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Transaction { 
+  id_transaction Int @id @default(autoincrement())
+  id_user Int 
+  user User @relation(fields: [id_user], references: [id])
+  id_ps Int 
+  ps PS @relation(fields: [id_ps], references: [id_ps])
+  start_hour DateTime 
+  end_hour DateTime 
+  total_price Decimal 
+  status_payment Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+
+
+model Product {
+  id   Int   @id @default(autoincrement())
+  name String
+  price Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+
+model Barang { 
+  id_barang Int @id @default(autoincrement())
+  nama String 
+  harga String 
+  deskripsi String 
+  image String?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  kategoriBarang Int
+  kategori Kategori @relation(fields: [kategoriBarang], references: [id_kategori])
+}
+
+model Kategori { 
+  id_kategori Int @id @default(autoincrement()) 
+  nama_kategori String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  barang Barang[]
+}
+
