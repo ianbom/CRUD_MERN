@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 import path from 'path';
+import {authenticateToken} from "../middleware/authenticateToken.js";
 
 const prisma = new PrismaClient();
 
@@ -60,13 +61,15 @@ export const register = async (req, res) => {
       if (!isMatch) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
+      const user_id = user.id
       const token = jwt.sign({ userId: user.id, email: user.email }, 'ianbom123', { expiresIn: '1h' }); //payload
       await prisma.user.update({
         where: { id: user.id },
         data: { token },
       });
   
-      res.json({ message: 'Login successful', token });
+      res.json({ message: 'Login successful', token,  user_id});
+      console.log('Tess', user_id, token)
     } catch (error) {
       res.status(500).json({ error: 'Failed to login' });
     }
