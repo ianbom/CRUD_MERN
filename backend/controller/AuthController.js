@@ -99,7 +99,7 @@ export const register = async (req, res) => {
           image: imagePath,
         },
       });
-  
+      
       console.log('Updated user:', user);
       res.status(200).json(user);
     } catch (error) {

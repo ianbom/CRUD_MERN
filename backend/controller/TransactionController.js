@@ -124,3 +124,57 @@ export const getTransactionById = async (req, res) => {
     }
 
 }
+
+export const getAllTransaction = async (req, res) => { 
+    try {
+        const response = await prisma.transaction.findMany({ 
+            select: { 
+                id_transaction: true, 
+                start_hour: true, 
+                end_hour: true, 
+                total_price: true, 
+                status_payment: true, 
+                created_at: true, 
+                updated_at: true, 
+                user: { 
+                    select: { 
+                        id: true, 
+                        name: true
+                    }
+                },
+                ps: { 
+                    select: { 
+                        name_ps: true, 
+                        price: true, 
+                        room: { 
+                            select: {
+                                name_room: true
+                            }
+                        }
+                    }
+                }
+            }
+        }); 
+        console.log("Sukses tampil : ", response)
+        res.status(200).json(response);
+    } catch (error) {
+
+        res.status(400).json({msg: error.message});
+    }
+}
+
+    export const doneTransaction = async (req, res) => { 
+        try {
+            const transaction = await prisma.transaction.update({ 
+                where: { 
+                    id_transaction : Number(req.params.id)
+                },
+                data: { 
+                    status_payment: true
+                }
+            })
+            res.status(200).json(transaction);
+        } catch (error) {
+            res.status(400).json({msg: error.message});
+        }
+}

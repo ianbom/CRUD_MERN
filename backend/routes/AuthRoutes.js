@@ -8,5 +8,5 @@ const router = express.Router();
 router.post('/login', login,);
 router.post('/register', register);
 router.get('/profile', authenticateToken, profile);
-router.patch('/profile', authenticateToken, updateProfile, upload.single('image'));
+router.patch('/profile', authenticateToken, upload.single('image'), updateProfile);
 export default router;
