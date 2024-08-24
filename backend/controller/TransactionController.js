@@ -4,9 +4,10 @@ const prisma = new PrismaClient();
 
 export const getUserTransactions = async (req, res) => { 
     try {
-        const response = await prisma.transaction.findMany({ 
+        const response = await prisma.transaction.findUnique({ 
             where: { 
-                id_user : req.user.userId
+                id_transaction: {
+                }
             },
             select: { 
                 id_transaction: true, 
@@ -35,12 +36,50 @@ export const getUserTransactions = async (req, res) => {
                 }
             }
         }); 
+        console.log("ID user :")
         console.log("Sukses tampil : ", response)
         res.status(200).json(response);
     } catch (error) {
-
+        console.log(error)
         res.status(400).json({msg: error.message});
     }
+}
+
+
+export const myTransaction = async(req, res) => { 
+
+    try {
+        const transaction = await prisma.user.findUnique({ 
+            where: { id: req.user.id}, 
+            select:{ 
+                name: true,
+                transaction:{ 
+                    select:{ 
+                        id_transaction: true, 
+                        start_hour:true, 
+                        end_hour:true,
+                        total_price:true, 
+                        status_payment:true,
+                        ps:{ 
+                            select:{ 
+                                name_ps:true, 
+                                price: true, 
+                                room:{ 
+                                    select:{ 
+                                        name_room:true
+                                    }
+                                }
+                            }
+                        }
+                    }, 
+                }
+            }
+        }); 
+        res.status(200).json(transaction) 
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 
 
